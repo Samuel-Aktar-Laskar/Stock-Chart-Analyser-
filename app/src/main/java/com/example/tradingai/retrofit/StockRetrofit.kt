@@ -1,16 +1,15 @@
-package com.example.tradingai.retrofitinterfaces
+package com.example.tradingai.retrofit
 
 import com.example.tradingai.apiKey
-import com.example.tradingai.dtomodels.SearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface SearchResponceApi {
+interface StockRetrofit {
     @GET("/query")
     suspend fun GetSearchResponse(
         @Query("function") function : String="SYMBOL_SEARCH",
         @Query("keywords") keyword : String,
         @Query("apikey") apikey: String = apiKey
-    ) : Response<SearchResponse>
+    ) : Response<StocksNetworkEntity>
 }
