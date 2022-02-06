@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.tradingai.items
 import com.example.tradingai.ui.home.HomeSections
 
 @Composable

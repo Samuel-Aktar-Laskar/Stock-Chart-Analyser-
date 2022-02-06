@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingai.model.Stock
 import com.example.tradingai.repository.MainRepository
 import com.example.tradingai.retrofit.StocksNetworkEntity
@@ -50,7 +51,14 @@ constructor(
             Log.d(TAG, "getWatchList: Inside it")
             mainRepository.getWatchList().onEach {
                 _watchListStocks.value = it
-            }. launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun addStockInWatchList(stock: Stock){
+        viewModelScope.launch {
+            mainRepository.addStockInWatchList(stock)
+            getWatchList()
         }
     }
 

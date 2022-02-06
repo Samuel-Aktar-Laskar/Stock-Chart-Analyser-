@@ -11,12 +11,16 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.example.tradingai.model.Stock
 import com.example.tradingai.ui.components.WatchListStockCard
+import com.example.tradingai.util.DataState
 
 
 private const val TAG = "WatchListLog"
@@ -24,9 +28,30 @@ private const val TAG = "WatchListLog"
 fun WatchList(
     onStockClicked: (symbol : String)-> Unit,
     modifier : Modifier=Modifier,
-    watchlistStocks : List<Stock>,
-    onAddClicked: ()->Unit
+    watchlistStocks : LiveData<DataState<List<Stock>>>,
+    onAddClicked: ()->Unit,
+    lifecycleOwner: LifecycleOwner
 ){
+    var stocks by remember {
+        mutableStateOf(listOf<Stock>())
+    }
+
+
+    watchlistStocks.observe(lifecycleOwner, Observer { dataState->
+        when (dataState) {
+            is DataState.Success<List<Stock>> -> {
+                stocks = dataState.data
+            }
+            is DataState.Error -> {
+
+            }
+            is DataState.Loading -> {
+
+            }
+        }
+    })
+
+
     Column(
         modifier = Modifier.padding(all = 10.dp)
     ) {
@@ -56,7 +81,7 @@ fun WatchList(
 
         LazyColumn(
         ) {
-            items(watchlistStocks) { stock ->
+            items(stocks) { stock ->
                 WatchListStockCard(
                     onClick = {onStockClicked(stock.symbol)},
                     name = stock.name,

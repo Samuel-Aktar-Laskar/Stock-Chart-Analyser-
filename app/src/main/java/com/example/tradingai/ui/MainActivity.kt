@@ -48,13 +48,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
 
-sealed class bottomBars(val route: String, val name: String, val icon: ImageVector){
-    object WatchList: bottomBars("watchlist", "Watchlist",
-       Icons.Filled.ShoppingCart )
-    object Chart : bottomBars("chart", "Chart",Icons.Filled.Star)
-}
 
-val items = listOf(bottomBars.WatchList, bottomBars.Chart)
+
 private const val TAG = "MainActivityLog"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -65,71 +60,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        setContent {/*TradingAITheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    val navController = rememberNavController()
-
-                    Scaffold(
-                        bottomBar =  {
-                            BottomNavigation {
-                                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                                val currentDestination = navBackStackEntry?.destination
-                                items.forEach { screen ->
-                                    BottomNavigationItem(
-                                        icon = {
-                                            Icon(screen.icon, contentDescription = null)
-                                        },
-                                        label = { Text(text = screen.name) },
-                                        selected = currentDestination?.hierarchy?.any {
-                                            it.route == screen.route
-                                        } ?: false,
-                                        onClick = {
-                                            navController.navigate(screen.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
-                                    )
-
-                                }
-                            }
-                        },
-
-
-                    ) {
-
-                        NavHost(
-                            navController,
-                            startDestination = bottomBars.WatchList.route,
-                            Modifier.padding(it)
-                        ) {
-                            composable(bottomBars.WatchList.route) {
-                                WatchListComposable(navController) }
-                            composable(bottomBars.Chart.route) {
-                                ChartsComposable(navController)
-                            }
-
-                        }
-                    }
-
-                }
-            }*/
-            viewModel.stocks.observe(this, Observer { dataState ->
-
-            })
+        setContent {
             TradingApp(
                 triggerSearch = {
                     viewModel.getStocks(it)
                 },
                 searchStocks = viewModel.stocks,
-                lifecycleOwner = this
+                lifecycleOwner = this,
+                addStockInWatchList = {
+                    viewModel.addStockInWatchList(it)
+                },
+                watchListStocks = viewModel.watchListStocks
             )
         }
     }
@@ -137,89 +78,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-    @OptIn(ExperimentalComposeUiApi::class)
-    @Composable
-    private fun WatchListComposable(navController: NavHostController) {
-        var text by remember {
-            mutableStateOf("")
-        }
-        var stockList by remember {
-            mutableStateOf(listOf<Stock>())
-        }
-        var isLoading  by remember {
-            mutableStateOf(false)
-        }
-
-
-
-
-
-        Column(
-            modifier = Modifier.padding(all = 20.dp)
-        ) {
-
-
-
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val focusManager = LocalFocusManager.current
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                    },
-                    placeholder =
-                    {
-                        Text(text = "Search")
-                    },
-                    label = {
-                        Text(text = "Search Stocks")
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = {
-                        viewModel.getStocks(text)
-                        focusManager.clearFocus()
-                        isLoading = true
-                    }
-                    )
-                )
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Outlined.Search, contentDescription = "Search")
-                }
-
-            }
-
-            if (isLoading) progress(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 20.dp))
-
-
-
-            LazyColumn(
-            ) {
-                items(stockList) { stock ->
-                    StockCard(
-                        name = stock.name,
-                        region = stock.region,
-                        time = "${stock.marketOpen} to ${stock.marketClose}",
-                        symbol = stock.symbol
-                    )
-                }
-            }
-
-
-        }
-    }
-
-    @Composable
-    fun progress(modifier: Modifier){
-        CircularProgressIndicator(
-            modifier = modifier
-        )
-    }
 
 
 

@@ -22,7 +22,8 @@ import com.example.tradingai.ui.components.WatchListStockCard
 private const val TAG = "ResultLog"
 @Composable
 fun Result(
-    stocks : List<Stock>
+    stocks : List<Stock>,
+    onClick : (Stock)->Unit
 ) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 15.dp),
@@ -35,6 +36,7 @@ fun Result(
                 symbol = stock.symbol,
                 onClick = {
                     Log.d(TAG, "Result: Clicked")
+                    onClick(stock)
                 }
             )
 

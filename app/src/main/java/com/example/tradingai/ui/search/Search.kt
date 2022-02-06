@@ -57,7 +57,8 @@ fun Search(
     modifier: Modifier = Modifier,
     state: SearchState = rememberSearchState(),
     upPress: () -> Unit,
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    onClick : (Stock)->Unit
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column {
@@ -84,7 +85,6 @@ fun Search(
                         Log.d(TAG, "Search: result observed :${dataState.data}")
                         state.searchResults = dataState.data
                         state.searching = false
-
                     }
                     is DataState.Error -> {
 
@@ -114,7 +114,11 @@ fun Search(
                 SearchDisplay.Results -> {
                     Log.d(TAG, "Search: To display search result :${state.searchResults}")
                     Result(
-                        stocks = state.searchResults
+                        stocks = state.searchResults,
+                        onClick = {
+                            onClick(it)
+                            upPress()
+                        }
                     )
 
                 }

@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.tradingai.bottomBars
 import com.example.tradingai.model.Stock
 import com.example.tradingai.ui.chart.Chart
 import com.example.tradingai.ui.components.BottomBar
@@ -22,7 +21,9 @@ import com.example.tradingai.util.DataState
 fun TradingApp(
     triggerSearch: (String) ->Unit,
     searchStocks : LiveData<DataState<List<Stock>>>,
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    addStockInWatchList: (Stock) -> Unit,
+    watchListStocks: LiveData<DataState<List<Stock>>>,
 ) {
     TradingAITheme {
         val appState = rememberTradingAppState()
@@ -47,7 +48,9 @@ fun TradingApp(
                     onAddClicked = appState::navigateToSearchScreen,
                     triggerSearch = triggerSearch,
                     searchStocks = searchStocks,
-                    lifecycleOwner = lifecycleOwner
+                    lifecycleOwner = lifecycleOwner,
+                    addStockInWatchList = addStockInWatchList,
+                    watchListStocks = watchListStocks
                 )
             }
         }
@@ -60,7 +63,9 @@ private fun NavGraphBuilder.jetsnackNavGraph(
     onAddClicked: (NavBackStackEntry) ->Unit,
     triggerSearch: (String) -> Unit,
     searchStocks: LiveData<DataState<List<Stock>>>,
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    addStockInWatchList: (Stock)->Unit,
+    watchListStocks: LiveData<DataState<List<Stock>>>
 ) {
     navigation(
         route = MainDestinations.HOME_ROUTE,
@@ -68,7 +73,9 @@ private fun NavGraphBuilder.jetsnackNavGraph(
     ) {
         addHomeGraph(
             onStockSelected = onStockSelected,
-            onAddClicked = onAddClicked
+            onAddClicked = onAddClicked,
+            watchListStocks = watchListStocks,
+            lifecycleOwner = lifecycleOwner
         )
     }
     composable(
@@ -89,8 +96,8 @@ private fun NavGraphBuilder.jetsnackNavGraph(
             },
             upPress =  upPress,
             searchStocks = searchStocks,
-            lifecycleOwner = lifecycleOwner
-
+            lifecycleOwner = lifecycleOwner,
+            onClick = addStockInWatchList
         )
 
     }

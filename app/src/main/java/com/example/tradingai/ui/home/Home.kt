@@ -7,9 +7,13 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.example.tradingai.model.Stock
+import com.example.tradingai.util.DataState
 
 
 private const val TAG = "Homelog"
@@ -26,13 +30,16 @@ enum class HomeSections(
 fun NavGraphBuilder.addHomeGraph(
     onStockSelected: (String, NavBackStackEntry) -> Unit,
     modifier: Modifier = Modifier,
-    onAddClicked: (NavBackStackEntry)->Unit
+    onAddClicked: (NavBackStackEntry)->Unit,
+    watchListStocks: LiveData<DataState<List<Stock>>>,
+    lifecycleOwner: LifecycleOwner
 ) {
     composable(HomeSections.WATCHLIST.route) { from ->
-        WatchList(onStockClicked = { id -> onStockSelected(id, from) }, modifier, listOf(),
+        WatchList(onStockClicked = { id -> onStockSelected(id, from) }, modifier, watchListStocks,
             onAddClicked = {
                 Log.d(TAG, "addHomeGraph: ")
-                onAddClicked(from) }
+                onAddClicked(from) },
+            lifecycleOwner = lifecycleOwner
         )
     }
     composable(HomeSections.NEWS.route) { from ->
