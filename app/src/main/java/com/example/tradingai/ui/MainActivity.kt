@@ -2,52 +2,23 @@ package com.example.tradingai
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-
-import com.example.tradingai.model.Stock
 import com.example.tradingai.ui.MainViewModel
 import com.example.tradingai.ui.TradingApp
-
-import com.example.tradingai.ui.theme.TradingAITheme
 import com.example.tradingai.ui.theme.Typography
-import com.example.tradingai.util.DataState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-
-
 
 
 private const val TAG = "MainActivityLog"
@@ -58,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getWatchList()
 
 
         setContent {
@@ -68,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 searchStocks = viewModel.stocks,
                 lifecycleOwner = this,
                 addStockInWatchList = {
+                    Log.d(TAG, "onCreate: Add stock in watch list :$it")
                     viewModel.addStockInWatchList(it)
                 },
                 watchListStocks = viewModel.watchListStocks

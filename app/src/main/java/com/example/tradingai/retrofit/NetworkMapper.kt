@@ -1,6 +1,8 @@
 package com.example.tradingai.retrofit
 
 import com.example.tradingai.model.Stock
+import com.example.tradingai.retrofit.stocknetworkentity.StockNetworkEntity
+import com.example.tradingai.retrofit.stocknetworkentity.StocksNetworkEntity
 import com.example.tradingai.util.EntityMapper
 import javax.inject.Inject
 

@@ -1,6 +1,7 @@
 package com.example.tradingai.di
 
 import com.example.tradingai.repository.MainRepository
+import com.example.tradingai.retrofit.EndpointNetworkMapper
 import com.example.tradingai.retrofit.NetworkMapper
 import com.example.tradingai.retrofit.StockRetrofit
 import com.example.tradingai.room.CacheMapper
@@ -19,6 +20,7 @@ object RepositoryModule {
     @Provides
     fun provideMainRepository(
          networkMapper: NetworkMapper,
+         endpointNetworkMapper: EndpointNetworkMapper,
          stockRetrofit: StockRetrofit,
          cacheMapper: CacheMapper,
          stockDao: StockDao
@@ -27,7 +29,8 @@ object RepositoryModule {
             networkMapper = networkMapper,
             stockRetrofit = stockRetrofit,
             cacheMapper = cacheMapper,
-            stockDao = stockDao
+            stockDao = stockDao,
+            endpointNetworkMapper = endpointNetworkMapper
         )
     }
 }

@@ -33,7 +33,7 @@ object RetrofitModule {
 
     @Singleton
     @Provides
-    fun provideBlogService(retrofit: Retrofit.Builder): StockRetrofit {
+    fun provideStockService(retrofit: Retrofit.Builder): StockRetrofit {
         return retrofit
             .build()
             .create(StockRetrofit::class.java)

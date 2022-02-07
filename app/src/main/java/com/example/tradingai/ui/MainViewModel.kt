@@ -1,16 +1,13 @@
 package com.example.tradingai.ui
 
-import android.provider.ContactsContract
 import android.util.Log
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingai.model.Stock
+import com.example.tradingai.model.StockEndpoint
 import com.example.tradingai.repository.MainRepository
-import com.example.tradingai.retrofit.StocksNetworkEntity
 import com.example.tradingai.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -46,6 +43,10 @@ constructor(
         // mainRepository.getStockList(name)
     }
 
+    suspend fun getEndpoint(symbol : String) : StockEndpoint? {
+            return mainRepository.getStockEndpoint(symbol = symbol)
+    }
+
     fun getWatchList(){
         viewModelScope.launch {
             Log.d(TAG, "getWatchList: Inside it")
@@ -57,7 +58,7 @@ constructor(
 
     fun addStockInWatchList(stock: Stock){
         viewModelScope.launch {
-            mainRepository.addStockInWatchList(stock)
+            mainRepository.addStockInWatchList(stock).launchIn(viewModelScope)
             getWatchList()
         }
     }

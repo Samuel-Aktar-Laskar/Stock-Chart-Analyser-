@@ -2,6 +2,8 @@ package com.example.tradingai.repository
 
 import android.util.Log
 import com.example.tradingai.model.Stock
+import com.example.tradingai.model.StockEndpoint
+import com.example.tradingai.retrofit.EndpointNetworkMapper
 import com.example.tradingai.retrofit.NetworkMapper
 import com.example.tradingai.retrofit.StockRetrofit
 import com.example.tradingai.room.CacheMapper
@@ -15,10 +17,45 @@ private const val TAG = "MainRepositoryT"
 class MainRepository
 constructor(
     private val networkMapper: NetworkMapper,
+    private val endpointNetworkMapper: EndpointNetworkMapper,
     private val stockRetrofit: StockRetrofit,
     private val cacheMapper: CacheMapper,
     private val stockDao: StockDao
 ){
+    /*suspend fun getStockEndpoint(symbol : String) : Flow<DataState<StockEndpoint>> = flow {
+        Log.d(TAG, "getStockEndpoint: ")
+        emit(DataState.Loading)
+        try {
+            val endpointResp = stockRetrofit.GetStockEndpoint(
+                symbol = symbol
+            )
+            if (endpointResp.isSuccessful){
+                val endpoint = endpointResp.body() ?: return@flow
+                emit(DataState.Success(endpointNetworkMapper.mapFromEntity(endpoint.GlobalQuote)))
+            }
+        }
+        catch (e: Exception){
+            emit(DataState.Error(e))
+        }
+    }*/
+
+    suspend fun getStockEndpoint(symbol : String) : StockEndpoint? {
+        return try {
+            val endpointResp = stockRetrofit.GetStockEndpoint(
+                symbol = symbol
+            )
+            if (endpointResp.isSuccessful){
+                val endpoint = endpointResp.body() ?: return null
+                return endpointNetworkMapper.mapFromEntity(endpoint.GlobalQuote)
+            }
+            return null
+        }
+        catch (e: Exception){
+            Log.d(TAG, "getStockEndpoint: Error :${e.localizedMessage}")
+            return null
+        }
+    }
+
     suspend fun getStocks(keyword: String): Flow<DataState<List<Stock>>> = flow {
         Log.d(TAG, "getStocks: CAlled getStocks")
         emit (DataState.Loading)
