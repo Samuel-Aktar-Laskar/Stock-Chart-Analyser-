@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.tradingai.model.Stock
 import com.example.tradingai.model.StockEndpoint
+import com.example.tradingai.model.Watchlist
 import com.example.tradingai.repository.MainRepository
 import com.example.tradingai.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,8 +28,8 @@ constructor(
     val stocks: LiveData<DataState<List<Stock>>>
         get() = _stocks
 
-    private val _watchListStocks: MutableLiveData<DataState<List<Stock>>> = MutableLiveData()
-    val watchListStocks: LiveData<DataState<List<Stock>>>
+    private val _watchListStocks: MutableLiveData<DataState<List<Watchlist>>> = MutableLiveData()
+    val watchListStocks: LiveData<DataState<List<Watchlist>>>
         get() = _watchListStocks
 
     fun getStocks(name: String) {

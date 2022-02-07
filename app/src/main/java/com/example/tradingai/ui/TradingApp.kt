@@ -10,6 +10,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tradingai.model.Stock
+import com.example.tradingai.model.Watchlist
 import com.example.tradingai.ui.chart.Chart
 import com.example.tradingai.ui.components.BottomBar
 import com.example.tradingai.ui.home.HomeSections
@@ -23,7 +24,7 @@ fun TradingApp(
     searchStocks : LiveData<DataState<List<Stock>>>,
     lifecycleOwner: LifecycleOwner,
     addStockInWatchList: (Stock) -> Unit,
-    watchListStocks: LiveData<DataState<List<Stock>>>,
+    watchListStocks: LiveData<DataState<List<Watchlist>>>,
 ) {
     TradingAITheme {
         val appState = rememberTradingAppState()
@@ -65,7 +66,7 @@ private fun NavGraphBuilder.jetsnackNavGraph(
     searchStocks: LiveData<DataState<List<Stock>>>,
     lifecycleOwner: LifecycleOwner,
     addStockInWatchList: (Stock)->Unit,
-    watchListStocks: LiveData<DataState<List<Stock>>>
+    watchListStocks: LiveData<DataState<List<Watchlist>>>
 ) {
     navigation(
         route = MainDestinations.HOME_ROUTE,

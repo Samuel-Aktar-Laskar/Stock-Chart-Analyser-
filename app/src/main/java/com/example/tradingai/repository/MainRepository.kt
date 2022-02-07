@@ -3,6 +3,7 @@ package com.example.tradingai.repository
 import android.util.Log
 import com.example.tradingai.model.Stock
 import com.example.tradingai.model.StockEndpoint
+import com.example.tradingai.model.Watchlist
 import com.example.tradingai.retrofit.EndpointNetworkMapper
 import com.example.tradingai.retrofit.NetworkMapper
 import com.example.tradingai.retrofit.StockRetrofit
@@ -22,23 +23,7 @@ constructor(
     private val cacheMapper: CacheMapper,
     private val stockDao: StockDao
 ){
-    /*suspend fun getStockEndpoint(symbol : String) : Flow<DataState<StockEndpoint>> = flow {
-        Log.d(TAG, "getStockEndpoint: ")
-        emit(DataState.Loading)
-        try {
-            val endpointResp = stockRetrofit.GetStockEndpoint(
-                symbol = symbol
-            )
-            if (endpointResp.isSuccessful){
-                val endpoint = endpointResp.body() ?: return@flow
-                emit(DataState.Success(endpointNetworkMapper.mapFromEntity(endpoint.GlobalQuote)))
-            }
-        }
-        catch (e: Exception){
-            emit(DataState.Error(e))
-        }
-    }*/
-
+   
     suspend fun getStockEndpoint(symbol : String) : StockEndpoint? {
         return try {
             val endpointResp = stockRetrofit.GetStockEndpoint(
@@ -75,13 +60,21 @@ constructor(
         }
     }
 
-    suspend fun getWatchList() : Flow<DataState<List<Stock>>> = flow {
+    suspend fun getWatchList() : Flow<DataState<List<Watchlist>>> = flow {
         Log.d(TAG, "getWatchList: ")
         emit(DataState.Loading)
         try {
             val stockCacheEntities : List<StockCacheEntity> = stockDao.GetWatchlistStoks()
             val stocks = cacheMapper.mapFromEntityList(stockCacheEntities)
-            emit(DataState.Success(stocks))
+            val watchlists = stocks.map {
+                val endpoint = getStockEndpoint(it.symbol)
+                Log.d(TAG, "getWatchList: Endpoint price :${endpoint?.Price}")
+                Watchlist(
+                    stock = it,
+                    stockEndpoint = endpoint
+                )
+            }
+            emit(DataState.Success(watchlists))
         }
         catch (e: Exception){
             emit(DataState.Error(e))

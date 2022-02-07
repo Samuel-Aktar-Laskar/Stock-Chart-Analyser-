@@ -13,6 +13,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.tradingai.model.Stock
+import com.example.tradingai.model.Watchlist
 import com.example.tradingai.util.DataState
 
 
@@ -31,7 +32,7 @@ fun NavGraphBuilder.addHomeGraph(
     onStockSelected: (String, NavBackStackEntry) -> Unit,
     modifier: Modifier = Modifier,
     onAddClicked: (NavBackStackEntry)->Unit,
-    watchListStocks: LiveData<DataState<List<Stock>>>,
+    watchListStocks: LiveData<DataState<List<Watchlist>>>,
     lifecycleOwner: LifecycleOwner
 ) {
     composable(HomeSections.WATCHLIST.route) { from ->

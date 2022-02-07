@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.example.tradingai.model.Stock
+import com.example.tradingai.model.Watchlist
 import com.example.tradingai.ui.components.WatchListStockCard
 import com.example.tradingai.util.DataState
 
@@ -28,18 +29,18 @@ private const val TAG = "WatchListLog"
 fun WatchList(
     onStockClicked: (symbol : String)-> Unit,
     modifier : Modifier=Modifier,
-    watchlistStocks : LiveData<DataState<List<Stock>>>,
+    watchlistStocks : LiveData<DataState<List<Watchlist>>>,
     onAddClicked: ()->Unit,
     lifecycleOwner: LifecycleOwner
 ){
     var stocks by remember {
-        mutableStateOf(listOf<Stock>())
+        mutableStateOf(listOf<Watchlist>())
     }
 
 
     watchlistStocks.observe(lifecycleOwner, Observer { dataState->
         when (dataState) {
-            is DataState.Success<List<Stock>> -> {
+            is DataState.Success<List<Watchlist>> -> {
                 stocks = dataState.data
             }
             is DataState.Error -> {
@@ -81,13 +82,13 @@ fun WatchList(
 
         LazyColumn(
         ) {
-            items(stocks) { stock ->
+            items(stocks) { watchlist ->
                 WatchListStockCard(
-                    onClick = {onStockClicked(stock.symbol)},
-                    name = stock.name,
-                    region = stock.region,
-                    time = "${stock.marketOpen} to ${stock.marketClose}",
-                    symbol = stock.symbol
+                    onClick = {onStockClicked(watchlist.stock.symbol)},
+                    name = watchlist.stock.name,
+                    region = watchlist.stock.region,
+                    time = "${watchlist.stock.marketOpen} to ${watchlist.stock.marketClose}",
+                    symbol = watchlist.stock.symbol
                 )
             }
         }
